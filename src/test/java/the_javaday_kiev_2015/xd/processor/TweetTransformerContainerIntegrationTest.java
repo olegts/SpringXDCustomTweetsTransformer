@@ -71,4 +71,19 @@ public class TweetTransformerContainerIntegrationTest {
 		chain.destroy();
 	}
 
+	@Test
+	public void testTweetTransformerInXDContainerWithOptions() throws Exception {
+		String STREAM_NAME = "test_stream";
+		String tweet = IOUtils.toString(TweetTransformerContainerIntegrationTest.class.getClassLoader().getResourceAsStream("tweet.json"), Charset.forName("UTF-8"));
+
+		String moduleDefinition = String.format("%s --extractField=%s", MODULE_NAME, "id_str");
+		SingleNodeProcessingChain chain = chain(application, STREAM_NAME, moduleDefinition);
+		chain.sendPayload(tweet);
+		String result = (String) chain.receivePayload(RECEIVE_TIMEOUT);
+		System.out.println(result);
+
+		assertEquals("643115920458649600", result);
+		chain.destroy();
+	}
+
 }

@@ -23,7 +23,7 @@ import org.springframework.messaging.MessageChannel;
 
 @Configuration
 @EnableIntegration
-public class ModuleConfiguration {
+public class TweetTransformerModuleConfiguration {
 	@Bean
 	MessageChannel input() {
 		return new DirectChannel();

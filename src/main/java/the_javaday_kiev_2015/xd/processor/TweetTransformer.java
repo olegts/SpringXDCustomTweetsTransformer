@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.Transformer;
 import org.springframework.integration.transformer.MessageTransformationException;
@@ -32,12 +33,15 @@ public class TweetTransformer {
 
 	private ObjectMapper mapper = new ObjectMapper();
 
+	@Value("${extractField:text}")
+	private String extractField;
+
 	@Transformer(inputChannel = "input", outputChannel = "output")
 	public String transform(String jsonPayload) {
 		try {
 			LOG.info("Transforming tweet: " + jsonPayload);
 			Map<String, Object> tweet = mapper.readValue(jsonPayload, new TypeReference<Map<String, Object>>() {});
-			return tweet.get("text").toString();
+			return tweet.get(extractField).toString();
 		}
 		catch (Exception e) {
 			throw new MessageTransformationException("Unable to transform tweet: " + e.getMessage(), e);
